@@ -5,18 +5,11 @@ import ant_agent
 
 
 class LeafCutterAnt(ant_agent.Agent):
-    health = 2
-    status = 1
-    name = ''
-    rank = 1
-    age = 1
-    queen = False
-    scout = True
     cat = ""
 
     # Constructor
-    def __init__(self, coord, name='JB', health=2, status=1, queen=False, cat="Minim"):
-        super().__init__(coord)
+    def __init__(self, coord, idd, colony_id, name='JB', health=2, status=1, queen=False, cat="Minim"):
+        super().__init__(coord, idd, colony_id)
         self.name = name
         self.health = health
         self.status = status
