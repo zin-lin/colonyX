@@ -1,4 +1,9 @@
-class RedAnt:
+# Author : Zin Lin Htun
+# Red Ant class, type :: agent
+import ant_agent
+
+
+class RedAnt(ant_agent.Agent):
     health = 2
     status = 1
     name = ''
@@ -6,7 +11,8 @@ class RedAnt:
     age = 1
     queen = False
 
-    def __init__(self, name='JB', health=2, status=1, queen=False):
+    def __init__(self, coord, name='JB', health=2, status=1, queen=False):
+        super().__init__(coord)
         self.name = name
         self.health = health
         self.status = status
