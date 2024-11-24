@@ -6,5 +6,5 @@ from resource import Resource
 class Leaf(Resource):
 
     # Constructor
-    def __init__(self, portions, size, **kwargs):
-        super().__init__(portions, size)
+    def __init__(self, coord, portions, size, **kwargs):
+        super().__init__(portions, size, coord, kwargs['id'])

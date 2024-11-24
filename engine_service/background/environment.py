@@ -11,4 +11,4 @@ class Environment:
         for i in range(size_y):
             self.grid.append([])
             for j in range(size_x):
-                self.grid[i].append(0)
+                self.grid[i].append(",,,")
