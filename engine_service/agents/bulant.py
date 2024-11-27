@@ -1,10 +1,10 @@
 # Author : Zin Lin Htun
 # Bullet Ant class, type :: agent
-from engine_service.agents import ant_agent
+from engine_service.agents.ant_agent import Agent
 from engine_service.background.coordinate import Coordinate
 
 
-class BulletAnt(ant_agent.Agent):
+class BulletAnt(Agent):
     health = 2
     status = 1
     name = ''

@@ -4,12 +4,6 @@ from engine_service.agents import ant_agent
 
 
 class RedAnt(ant_agent.Agent):
-    health = 2
-    status = 1
-    name = ''
-    rank = 1
-    age = 1
-    queen = False
 
     # Constructor
     def __init__(self, coord, idd, colony_id, name='JB', health=2, status=1, queen=False, scout=False, cat="Forager"):

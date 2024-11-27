@@ -1,6 +1,6 @@
 # Author : Zin Lin Htun
 # leaf class
-from resource import Resource
+from engine_service.resources.resource import Resource
 
 
 class Leaf(Resource):

@@ -3,13 +3,20 @@
 import math
 
 from engine_service.background.colony import *
-from engine_service.resources.resource import Resource
 from engine_service.background.coordinate import Coordinate
+from uuid import uuid4
+
+from engine_service.resources.resource import Resource
 
 
 class Helpers:
     def __init__(self):
         return
+
+    # get unique id
+    @staticmethod
+    def get_id():
+        return str(uuid4().hex)
 
     # find colony from colonies
     @staticmethod
@@ -37,9 +44,7 @@ class Helpers:
 
     # find resource in resources
     @staticmethod
-    def _find_resource(resources=None, rid=""):
-        if resources is None:
-            resources = [Resource(3, 3, Coordinate(0, 0), "")]
+    def _find_resource(resources, rid=""):
 
         # find colony
         for res in resources:
@@ -66,26 +71,47 @@ class Helpers:
         res_id = data[3]
 
         # find ant if exist
-        if colony_id is not "":
+        if colony_id != "":
             colony = Helpers._find_colony(colonies, colony_id)
-            if colony is not "":
+            if colony != "":
                 ant = Helpers._find_ant(colony, ant_id)
 
-        if res_id is not "":
+        if res_id != "":
             resource = Helpers._find_resource(resources, res_id)
+        data_object = {'pheromone_id': pheromone_id, 'colony_id': colony_id,
+                       'ant': ant, 'res': resource, 'coordinate': coord}
 
-        return {'pheromone_id': pheromone_id, 'colony_id': colony_id, 'ant': ant, 'resource': resource, 'coord': coord}
+        return data_object
 
     # public method for finding ants
     @staticmethod
     def find_ant(colony=None, ant_id=""):
         return Helpers._find_ant(colony, ant_id)
 
+    # public method for finding colony
+    @staticmethod
+    def find_colony(colonies=None, cid=""):
+        return Helpers._find_colony(colonies, cid)
+
+    # public method for finding colony index
+    @staticmethod
+    def find_colony_ind(colonies=None, cid=""):
+        if colonies is None:
+            colonies = [Colony(1, "ants-1", 0, [])]
+
+            # find colony
+        ind = None
+        for colony in colonies:
+            if colony.id == cid:
+                return ind
+            ind += 1
+        return ind
+
     # public method for finding resource
     @staticmethod
-    def find_resource(resources=None, rid=""):
+    def find_resource_ind(resources=None, rid=""):
         if resources is None:
-            resources = [Resource(3, 3, Coordinate(0, 0), "")]
+            resources = []
 
         # find colony
         ind = 0
@@ -104,4 +130,36 @@ class Helpers:
         distance = math.sqrt(dx ** 2 + dy ** 2)
         return distance
 
-        
+    # print grid
+    @staticmethod
+    def print_grid(grid: list[list[str]]):
+        for row in grid:
+            for cell in row:
+                print(cell, end=' ')
+            print(end='\n')
+
+    # print grid in visual
+    @staticmethod
+    def visualize_grid(grid: list[list[str]]):
+        for row in grid:
+            for cell in row:
+                data = cell.split(',')
+                if cell == ",,,":
+                    print("     ", end=' ')
+                elif data[0] != "" and data[1] != "" and data[2] == "" and data[3] == "":
+                    print("  ࿚  ", end=' ')
+                elif data[1] != "":
+                    if data[2] != "":
+                        print("  🐜  ", end=' ')
+                    else:
+                        print("__O__", end=' ')
+                elif data[3] != "":
+                    if data[2] != "":
+                        print("  🐜 ", end=' ')
+                    else:
+                        print("  🌲  ", end=' ')
+
+            print(end='\n')
+
+        # update terminal
+        print(flush=True)

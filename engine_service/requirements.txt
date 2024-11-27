@@ -7,3 +7,4 @@ Flask-JWT-Extended
 firebase-admin
 flask_socketio
 flask-bcrypt
+asyncio

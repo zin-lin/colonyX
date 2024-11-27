@@ -12,13 +12,13 @@ class Knowledge:
         self.scan_data = scan_data
         self.msg = msg
         _count = 0
+        self.knowledge_data = []
 
         # assign data
         for data in self.scan_data:
 
-            data_object = Helpers.process_data(self.scan_data, colonies, resources, coords[_count])
-            if not (data_object['pheromone_id'] is None and data_object['colony_id'] is None and data_object['ant']
-                    is None and data_object['resource'] is None):
-                self.knowledge_data.append(data_object)
+            data_object = Helpers.process_data(data, colonies, resources, coords[_count])
+
+            self.knowledge_data.append(data_object)
             _count += 1
 
