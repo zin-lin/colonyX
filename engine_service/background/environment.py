@@ -109,13 +109,13 @@ class Environment:
                 if colony is not None:
                     colonies.remove(colony)
 
+
     # Manage State
     def manage_state(self, colonies, resources):
         self._init_state(self.size[0], self.size[1])
 
         for colony in colonies:
             self._deal_colony(colony)
-
             # deal with ants
 
             ants = colony.ants
@@ -124,6 +124,11 @@ class Environment:
                 self._deal_pheromone(phe)
 
             for ant in ants:
+                # print(colony.coord.x)
+                if ant.coord.x != colony.coord.x or ant.coord.y != colony.coord.y:
+                    self._deal_ant(ant, colony)
+
+            for ant in colony.scouts:
                 # print(colony.coord.x)
                 if ant.coord.x != colony.coord.x or ant.coord.y != colony.coord.y:
                     self._deal_ant(ant, colony)

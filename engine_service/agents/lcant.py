@@ -23,19 +23,5 @@ class LeafCutterAnt(ant_agent.Agent):
         # species specifics
         self.species = "LC"
 
-        #  species specific role setting except scouting, that is done in the agent __base__ class
-        # if cat == "Minor":
-        #     self._scan_reach = 2
-        #     self.msg = "diplomatic"
-        #
-        # elif cat == "Major":
-        #     self._scan_reach = 5
-        #     self.msg = "aggressive"
-        #
-        # elif cat == "Mediae":
-        #     self._scan_reach = 2
-        #     self.msg = "allocate"
-
-        if not self.scout:
-            self._scan_reach = 1
-            self.msg = "allocate"
+        self._scan_reach = 1
+        self.msg = "allocate"

@@ -14,14 +14,13 @@ def add_minim_or_forager(colony, number=1, code="LC"):
             colony.ants.append(LeafCutterAnt(Coordinate(colony.coord.x, colony.coord.y), Helpers.get_id(),
                                              colony.id, "Bob",
                                              ))
-        elif code == "RD":
-            colony.ants.append(RedAnt(Coordinate(colony.coord.x, colony.coord.y), Helpers.get_id(),
-                                      colony.id, "Bob",
-                                      ))
-        elif code == "BL":
-            colony.ants.append(BulletAnt(Coordinate(colony.coord.x, colony.coord.y), Helpers.get_id(),
-                                         colony.id, "Bob",
-                                         ))
+
+
+def add_scout(colony, number=1, code="LC"):
+    for i in range(number):
+        if code == "LC":
+            colony.scouts.append(LeafCutterAnt(Coordinate(colony.coord.x, colony.coord.y),Helpers.get_id(), colony.id,
+                                               "Bob", 2, 1, False, True, ))
 
 
 def add_minor(colony, number=1, code="LC"):
@@ -29,14 +28,6 @@ def add_minor(colony, number=1, code="LC"):
         colony.ants.append(LeafCutterAnt(Coordinate(colony.coord.x, colony.coord.y), Helpers.get_id(),
                                          colony.id, "Bob", 2, 1, False, False, "Minor"
                                          ))
-    elif code == "RD":
-        colony.ants.append(RedAnt(Coordinate(colony.coord.x, colony.coord.y), Helpers.get_id(),
-                                  colony.id, "Bob", 2, 1, False, False, "Minor"
-                                  ))
-    elif code == "BL":
-        colony.ants.append(BulletAnt(Coordinate(colony.coord.x, colony.coord.y), Helpers.get_id(),
-                                     colony.id, "Bob", 2, 1, False, False, "Minor"
-                                     ))
 
 
 # colonies
@@ -47,7 +38,7 @@ colonies = [
 ]
 
 resources = [
-    Tree(Helpers.get_id(), Coordinate(16, 10), ),
+    Tree(Helpers.get_id(), Coordinate(21, 18), ),
     Tree(Helpers.get_id(), Coordinate(11, 23), ),
 ]
 
@@ -62,13 +53,18 @@ env.add_colonies(colonies)
 for i in range(5):
     add_minim_or_forager(lc1)
 
+for i in range(1):
+    add_scout(lc1)
+    add_scout(lc2)
+    add_scout(lc3)
+
 for i in range(5):
     add_minim_or_forager(lc2)
 
 for i in range(5):
     add_minim_or_forager(lc3)
 
-env.test_add_pheromone(lc1, lc2, lc3)
+
 
 # Uncomment this to test print grid
 # Helpers.print_grid(env.grid)
@@ -87,23 +83,26 @@ async def process_ant(ant, cls, ress, envv):
         if ant.cat == "Minim":
             ant.perform_turn(cls, ress, envv.grid)
     else:
-        print("scouty")
+        ant.scout_perform(cls, ress, envv.grid)
+        print(ant.status)
     envv.manage_state(colonies, resources)
     Helpers.visualize_grid(env.grid)
 
 
-
 async def process_colony(colony, cls, ress, envv):
     """Process all ants in a colony."""
-    tasks = [process_ant(ant, cls, ress, envv) for ant in colony.ants]
+    tasks = [
+        *[process_ant(scout, cls, ress, envv) for scout in colony.scouts],
+        *[process_ant(ant, cls, ress, envv) for ant in colony.ants]
+    ]
     await asyncio.gather(*tasks)
 
 
 async def main_loop(cls, ress, envv):
     """Main loop to process colonies and visualize."""
     while True:
-        #input()
         # Create tasks for all colonies
+        # input()
         tasks = [process_colony(col, cls, ress, envv) for col in cls]
         await asyncio.gather(*tasks)
 

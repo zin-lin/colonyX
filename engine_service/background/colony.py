@@ -9,11 +9,6 @@ class Colony:
     name = ""
     res_portion = 0
     ants = []
-    coord = Coordinate(0, 0)
-    pheromones = []
-    scouts = []
-    soldiers = []
-    queen = None
 
     # Constructor
     def __init__(self, idd, name, res_portion, ants, coord=Coordinate(0, 0)):
@@ -25,7 +20,6 @@ class Colony:
         self.pheromones = []
         self.scouts = []
         self.soldiers = []
-        self.queen = None
 
     # remove dead ants
     def remove_dead_ants(self):

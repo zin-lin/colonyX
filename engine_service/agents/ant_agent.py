@@ -3,6 +3,7 @@
 from engine_service.background.coordinate import Coordinate
 from engine_service.resources.leaf import *
 from engine_service.background.knowledge import *
+from engine_service.resources.pheromone import Pheromone
 from engine_service.resources.tree import Tree
 from uuid import uuid4
 import random
@@ -42,7 +43,7 @@ class Agent:
         self.prev_coord = None
 
         if self.scout:
-            self._scan_reach = 2
+            self._scan_reach = 1
 
     # move around
     def _move(self, coord: Coordinate):
@@ -126,31 +127,6 @@ class Agent:
         else:
             new.move_left()
 
-        # commands
-        if msg == "move up":
-            self.coord.move_up(self.step)
-
-        elif msg == "move down":
-            self.coord.move_down(self.step)
-
-        elif msg == "move left":
-            self.coord.move_left(self.step)
-
-        elif msg == "move right":
-            self.coord.move_right(self.step)
-
-        elif msg == "move left up":
-            self.coord.move_left_up(self.step, self.step)
-
-        elif msg == "move right up":
-            self.coord.move_right_up(self.step, self.step)
-
-        elif msg == "move left down":
-            self.coord.move_left_down(self.step, self.step)
-
-        elif msg == "move right down":
-            self.coord.move_right_down(self.step, self.step)
-
         return new
 
     # scan around environment
@@ -185,7 +161,10 @@ class Agent:
         return
 
     # leave pheromone trial
-    def _leave_pheromone(self):
+    def _leave_pheromone(self, colony ):
+        pheromone = Pheromone(self.colony_id,self.id, Coordinate(self.coord.x, self.coord.y))
+        colony.pheromones.append(pheromone)
+
         return
 
     # acquire  resources
@@ -413,18 +392,32 @@ class Agent:
                 min_value = dis
                 min_res = res
 
-        return min_res
+        return min_res.coord
+
+    # if adajacent
+    @staticmethod
+    def _if_adjacent(coord, coord1):
+        if abs(coord.x-coord1.x) <=1 and abs(coord.y-coord1.y )<=1:
+            return True
+        return False
 
 
     # perform for scout
     def scout_perform(self, colonies, resources, grid):
+
+        colony = Helpers.find_colony(colonies, self.colony_id)
+
+        # don't do if scout has active trail
+        if self.status == 1 and self.found and self.coord.x == colony.coord.x and self.coord.y == colony.coord.y:
+            return
+
         self._scan(colonies, resources, grid)
         know_data = self._knowledge.knowledge_data
         current = Coordinate(self.coord.x, self.coord.y)
         empty = []
 
         for data in know_data:
-            if data['pheromone_id'] == "" and (data['ant'] is None) and (data['res'] is None) and (data['colony_id'] == ""):
+            if data['res'] is None and data['pheromone_id'] == "" and data['ant'] is None:
                 empty.append(data)
 
         # If 1st turn/ leaving nest
@@ -470,14 +463,13 @@ class Agent:
                     prop = self._prospective_move(should_move_coord)
                     if self.status == 1:
                         for col in colonies:
-                            for ant in colony.ants:
+                            for ant in col.ants:
                                 if should_move_coord.x == ant.coord.x and should_move_coord.y == ant.coord.y:
                                     # print('not moving')
                                     if not (should_move_coord.x == colony.coord.x and should_move_coord.y == colony.coord.y):
                                         return
                         self._move(should_move_coord)  # move it!  move it!
-                        if self.coord.x ==  self.target_coord.x and self.coord.y == self.target_coord.y:
-
+                        if Agent._if_adjacent(self.coord, self.target_coord):
                             self.res = None
                             self.status = 2
                             self._scan_reach = 1
@@ -488,6 +480,57 @@ class Agent:
                     ms = 9
         else:
             # status 2
+
+            x1 = self.coord.x
+            y1 = self.coord.y
+
+            x2 = colony.coord.x
+            y2 = colony.coord.y
+
+            # move decision
+            min_home_index = 0
+            min_dis = 1000000
+            index = 0
+            # print(len(empty))
+
+            for emp in empty:
+                coordi = emp['coordinate']
+                for col in colonies:
+                    if col.coord.x == coordi.x and col.coord.y == coordi.y:
+                        if col.coord.x != colony.coord.x and col.coord.y != colony.coord.y:
+                            empty.remove(emp)
+
+            for emp in empty:
+                dis = Helpers.euclidian(emp['coordinate'], Helpers.find_colony(colonies, self.colony_id).coord)
+                if dis < min_dis:
+                    min_dis = dis
+                    min_home_index = index
+                index += 1
+
+            try:
+                should_move_coord = empty[min_home_index]['coordinate']
+                prop = self._prospective_move(should_move_coord)
+                if self.status == 2:
+                    for col in colonies:
+                        for ant in colony.ants:
+                            if should_move_coord.x == ant.coord.x and should_move_coord.y == ant.coord.y:
+                                # print('not moving')
+                                if not (should_move_coord.x == colony.coord.x and should_move_coord.y == colony.coord.y):
+                                    return
+                    self._leave_pheromone(colony)
+                    self._move(should_move_coord)  # move it!  move it!
+
+                    if self.coord.x == colony.coord.x and self.coord.y == colony.coord.y:
+                        print('home')
+                        self.res = None
+                        self.pheromone_id = ""
+                        self._scan_reach = 1
+                        self.prev_coord = None
+                        self.status = 1
+
+            except IndexError as e:
+                # print("not moving")
+                ms = 9
 
             return
 
