@@ -2,3 +2,4 @@
 /.vscode
 .key
 ./keys
+*/node_modules
