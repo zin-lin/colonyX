@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Title Bar</title>
+  <link rel="stylesheet" href="titlebar.css">
+</head>
+<body>
+  <!-- Custom Title Bar -->
+  <div id="titlebar">
+    <div id="title"></div>
+    <div id="controls">
+      <button id="minimize">-</button>
+      <button id="maximize">□</button>
+      <button id="close">×</button>
+    </div>
+  </div>
+
+  <!-- App Content -->
+  <div id="content">
+    <h1>Welcome to Electron with a Custom Title Bar</h1>
+    <p>Replace this content with your app!</p>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

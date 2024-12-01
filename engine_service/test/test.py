@@ -47,10 +47,10 @@ lc2 = colonies[1]
 lc3 = colonies[2]
 
 # env
-env = Environment(30, 30)
+env = Environment(36, 36)
 env.add_colonies(colonies)
 
-for i in range(5):
+for i in range(10):
     add_minim_or_forager(lc1)
 
 for i in range(1):
