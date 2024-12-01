@@ -3,3 +3,6 @@
 .key
 ./keys
 */node_modules
+/node_modules
+/entry/node_modules
+/engine_service/engine_fe/node_modules
