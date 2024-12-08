@@ -10,12 +10,11 @@ export default function About (){
         <div style={{
             zIndex: 9,
             height: 'auto',
-            background: 'rgba(34,18,18,0.16)',
             marginTop: -2,
             margin:40,
             borderRadius: 23,
             position: 'relative',
-            boxShadow: "4px 4px 16px 7px rgba(130,130,130,0.16) ",
+
         }} className='glassed'>
             <div className='glassed' style={{padding: 30, borderRadius: 23}}>
                 <div style={{
@@ -43,9 +42,7 @@ export default function About (){
                                         map
                                     </span>
                         </div>
-                        <p style={{color: '#555'}}>"Seamless map access in applications helps locate medical
-                            services quickly, optimizing routes for emergency responders and ensuring timely assistance,
-                            ultimately enhancing healthcare accessibility and response efficiency during emergencies.
+                        <p style={{color: '#555'}}>"Lorem ipsum dolor sit amet. Hic accusamus minus At rerum aspernatur ut corporis nulla eum minus suscipit est consequuntur sint. Et vitae dolor quo iure labore ea dignissimos perspiciatis. Hic molestias pariatur et quia nisi id quia natus et saepe repellendus eum galisum dolorum.
                             "</p>
                         <button className='redx shRed'>With Love</button>
                     </div>
@@ -65,9 +62,7 @@ export default function About (){
                                         map
                                     </span>
                         </div>
-                        <p style={{color: '#555'}}>"Seamless map access in applications helps locate medical
-                            services quickly, optimizing routes for emergency responders and ensuring timely assistance,
-                            ultimately enhancing healthcare accessibility and response efficiency during emergencies.
+                        <p style={{color: '#555'}}>"Lorem ipsum dolor sit amet. Hic accusamus minus At rerum aspernatur ut corporis nulla eum minus suscipit est consequuntur sint. Et vitae dolor quo iure labore ea dignissimos perspiciatis. Hic molestias pariatur et quia nisi id quia natus et saepe repellendus eum galisum dolorum.
                             "</p>
                         <button className='redx shRed'>Annex App</button>
                     </div>
@@ -87,9 +82,7 @@ export default function About (){
                                         map
                                     </span>
                         </div>
-                        <p style={{color: '#555'}}>"Seamless map access in applications helps locate medical
-                            services quickly, optimizing routes for emergency responders and ensuring timely assistance,
-                            ultimately enhancing healthcare accessibility and response efficiency during emergencies.
+                        <p style={{color: '#555'}}>"Lorem ipsum dolor sit amet. Hic accusamus minus At rerum aspernatur ut corporis nulla eum minus suscipit est consequuntur sint. Et vitae dolor quo iure labore ea dignissimos perspiciatis. Hic molestias pariatur et quia nisi id quia natus et saepe repellendus eum galisum dolorum.
                             "</p>
                         <button className='redx shRed'>My work</button>
                     </div>

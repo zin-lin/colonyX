@@ -1,19 +1,9 @@
 version: '3'
 
 services:
-  engine_service:
-
+  colonyx:
     build:
-      context: ./engine_service
-    container_name: engine_service
+      context: ./
+    container_name: colonyx
     ports:
       - "80:15000"
-
-  data_service:
-
-    build:
-      context: ./data_service
-    container_name: data_service
-    ports:
-      - "8080:15555"
-

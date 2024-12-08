@@ -5,6 +5,10 @@ from engine_service.resources.leaf import *
 from engine_service.background.knowledge import *
 from engine_service.resources.pheromone import Pheromone
 from engine_service.resources.tree import Tree
+from engine_service.resources.water import Water
+from engine_service.resources.meat import Meat
+from engine_service.resources.obstacle import Obstacle
+from engine_service.resources.portion import Portion
 from uuid import uuid4
 import random
 
@@ -35,6 +39,8 @@ class Agent:
         self._knowledge = None
         self.step =1
         self.found = False
+        self.mate = 0
+        self.mate_soldier = 0
 
         # important
         self.pheromone_id = ""
@@ -156,19 +162,43 @@ class Agent:
 
         self._knowledge = Knowledge(msgs, self.msg, colonies, resources, coords)
 
-    # attack other agents
-    def _attack(self):
-        return
 
     # leave pheromone trial
     def _leave_pheromone(self, colony ):
         pheromone = Pheromone(self.colony_id,self.id, Coordinate(self.coord.x, self.coord.y))
         colony.pheromones.append(pheromone)
-
         return
 
+    # remove resource
+    def _remove_resource(self, colonies, resources, resource):
+        resources.remove(resource)
+        for col in colonies:
+            # for each colony
+
+
+
+            # deal with scouts
+            for scout in col.scouts:
+                if scout.target_coord == resource.coord:
+                    scout.found = False
+                    scout.start = True
+                    scout.target_coord = None
+                    # deal with pheromones
+                    if len(col.pheromones) > 0:
+                            col.pheromones.clear()
+
+            for ant in col.ants:
+                if ant.coord != col.coord:
+                    ant.status = 2
+                    ant.res =  Portion(self.coord, 0, 0, id=0)  # fake
+
+            for soldier in col.soldiers:
+                if soldier.coord != col.coord:
+                    soldier.status = 2
+
+
     # acquire  resources
-    def _acquire_resources(self, resource, resources):
+    def _acquire_resources(self, resource, resources, colonies):
         # print('ac called')
         if self.status == 1:
             if type(resource) is Tree:
@@ -178,16 +208,32 @@ class Agent:
                 # size is the same as # rank, this is because ant can easily carry 4 portions of food
                 resource.leaf_count -= self.rank
                 if resource.leaf_count <= 0:
-                    resources.remove(resource)
+                    self._remove_resource(colonies, resources, resource)
             elif type(resource) is Leaf:
-
                 self.res = resource
                 resources.pop(Helpers.find_resource_ind(resources, resource.id))
+
+            elif type(resource) is Water:
+                if abs(resource.coord.x - self.coord.x) > 1 or abs(resource.coord.y - self.coord.y) > 1:
+                    return
+                self.res = Portion(self.coord, self.rank * 2, self.rank, id=get_id())
+                resource.drop -= self.rank
+                if resource.drop <= 0:
+                    self._remove_resource(colonies, resources, resource)
+
+            elif type(resource) is Meat:
+                if abs(resource.coord.x - self.coord.x) > 1 or abs(resource.coord.y - self.coord.y) > 1:
+                    return
+                self.res = Portion(self.coord, self.rank * 8, self.rank, id=get_id())
+                resource.gram -= self.rank
+                if resource.gram <= 0:
+                    self._remove_resource(colonies, resources, resource)
+
             else:
                 log = "nothing"
                 return
             self.status = 2
-
+            self._scan_reach = 2
             self.pheromone_id = ""
 
         return
@@ -241,7 +287,7 @@ class Agent:
 
             if should_acquire is not None:
                 try:
-                    self._acquire_resources(should_acquire['res'], resources)
+                    self._acquire_resources(should_acquire['res'], resources, colonies)
                 except Exception as e:
                     ppe = ('Error' + str(e))
 
@@ -272,7 +318,7 @@ class Agent:
                 try:
                     should_move_coord = pheromone[0]['coordinate']
                 except:
-                    print('not moving')
+                    print('not moving hhhhhhhhhhhhhhhhhhhhbhbjnjnjnknn')
                     return
 
                 try:
@@ -361,12 +407,12 @@ class Agent:
                 should_move_coord = empty[min_home_index]['coordinate']
                 prop = self._prospective_move(should_move_coord)
                 if self.status == 2:
-                    for col in colonies:
-                        for ant in colony.ants:
-                            if should_move_coord.x == ant.coord.x and should_move_coord.y == ant.coord.y:
-                                # print('not moving')
-                                if not (should_move_coord.x == colony.coord.x and should_move_coord.y == colony.coord.y):
-                                    return
+                    # for col in colonies:
+                    #     for ant in colony.ants:
+                    #         if should_move_coord.x == ant.coord.x and should_move_coord.y == ant.coord.y:
+                    #             # print('not moving')
+                    #             if not (should_move_coord.x == colony.coord.x and should_move_coord.y == colony.coord.y):
+                    #                 return
                     self._move(should_move_coord)  # move it!  move it!
 
                     if self.coord.x == colony.coord.x and self.coord.y == colony.coord.y:
@@ -383,10 +429,18 @@ class Agent:
 
     # assign resource
     @staticmethod
-    def _assign_closet_resource(coord, resources):
+    def _assign_closet_resource(coord, resources, colony = None):
+        ress = []
+        for res in resources:
+            if colony.banned_res is not None:
+                if res.coord.x != colony.banned_res.x and res.coord.y != colony.banned_res.y:
+                    ress.append(res)
+            else:
+                ress.append(res)
+
         min_res = None
         min_value = 100000
-        for res in resources:
+        for res in ress:
             dis = Helpers.euclidian(coord, res.coord)
             if dis < min_value:
                 min_value = dis
@@ -435,7 +489,9 @@ class Agent:
                         if prop.x == res.coord.x and prop.y == res.coord.y:
                             return
 
-                        self.target_coord = Agent._assign_closet_resource(prop, resources)
+                        self.target_coord = Agent._assign_closet_resource(prop, resources, colony)
+                        colony.target_res = Coordinate(self.target_coord.x, self.target_coord.y)
+                        print(colony.target_res)
                         self._move(should_move_coord)  # move
                         self.prev_coord = current
                         self.start = False
@@ -475,6 +531,7 @@ class Agent:
                             self._scan_reach = 1
                             self.prev_coord = None
                             self.found = True
+                            colony.target_res = self.target_coord
 
                 except IndexError as e:
                     ms = 9
@@ -517,6 +574,7 @@ class Agent:
                                 # print('not moving')
                                 if not (should_move_coord.x == colony.coord.x and should_move_coord.y == colony.coord.y):
                                     return
+
                     self._leave_pheromone(colony)
                     self._move(should_move_coord)  # move it!  move it!
 
@@ -528,11 +586,257 @@ class Agent:
                         self.prev_coord = None
                         self.status = 1
 
+
+            except IndexError as e:
+                # print("not moving")
+                ms = 9
+            return
+
+
+    # for the queen ant
+    def queen_perform(self, colonies, resources, grid):
+        colony_id = self.colony_id
+        colony = Helpers.find_colony(colonies, colony_id)
+        attacked = False
+
+        # queen eat
+        if colony.res_portion >=0.1:
+            colony.res_portion -= 0.1 # 0.1 portions eq 2 health portions
+            self.health += 2
+
+        # deal with ants protocols/ Agent messaging
+        for ant in colony.ants:
+            if ant.msg == "attacked":
+                attacked = True
+                ant.msg = "allocate"
+                # reset
+
+            # if one is attacked rtb
+            if attacked:
+                ant.status = 2
+                ant.res = Portion(self.coord, 0, 0, id=0)  # fake
+
+        target = colony.target_res
+
+        # deal with banned
+        if attacked:
+            if len(colony.pheromones) > 0:
+                colony.pheromones.clear()
+            banned = Coordinate(colony.target_res.x, colony.target_res.y)
+            colony.banned_res = banned
+            for scout in colony.scouts:
+                if scout.status != 2:
+                    scout.found = False
+
+        # reproduce more ants
+        worker_length = len(colony.ants)
+        soldier_length = len(colony.soldiers)
+
+        if worker_length < 10:  # max 10
+            if colony.res_portion > 150:
+                self.mate = 1
+                colony.res_portion -= 100
+
+        if soldier_length < 3:  # max 3 soldier ants
+            if colony.res_portion > 75:
+                self.mate_soldier = 1
+                colony.res_portion -= 50
+
+        # we need more devs in the world
+        # deal with soldiers
+        for ant in colony.soldiers:
+            if attacked:
+                ant.status = 66  # execute order 66 reference from SW: ROTS
+                ant.target_coord = target
+
+            else:
+                if self.status == 1 and self.coord == colony.coord:
+                    # randint = random.randrange(1,2)
+                    # if randint == 1:
+                    #     ant.status = 1
+                    #
+                    # elif randint == 2:
+                    #     ant.status = 3
+                    #     ant.target_coord = target
+                    #
+                    ant.status = 3
+                    ant.target_coord = target
+
+        # ok, reduce health every time, due to self growth
+        self.health -= 2
+        return
+
+    # attack
+    def _attack(self, other):
+        print("attack")
+        other.health -= 1
+        # if they were not soldiers
+        if other.rank != 3:
+            other.msg = 'attacked'
+
+    # perform soldier
+    def soldier_perform(self, colonies, resources, grid):
+        self._scan_reach = 2
+        self._scan(colonies, resources, grid)
+        know_data = self._knowledge.knowledge_data
+        current = Coordinate(self.coord.x, self.coord.y)
+        empty = []
+        ants_opp = []
+        soldiers_opp = []
+        colony = Helpers.find_colony(colonies, self.colony_id)
+
+        # for all data in known data
+        for data in know_data:
+            if data['res'] is None and data['pheromone_id'] == "" and data['ant'] is None:
+                empty.append(data)
+
+            elif data['ant'] is not None:
+                if data['ant'].colony_id != self.colony_id:
+                    if data['ant'].rank != 3:
+                        ants_opp.append(data)
+                    else:
+                        soldiers_opp.append(data)
+
+        if self.status == 1:
+            fight = False
+            length_ants = len(ants_opp)
+            length_soldiers = len(soldiers_opp)
+            if length_soldiers > 0:
+                attack_index = random.randrange(0, length_ants)
+                index = 0
+                for sold_opp in soldiers_opp:
+                    if index == attack_index:
+                        self._attack(soldiers_opp[index]['ant'])
+                        fight = True
+                    index += 1
+
+            if length_ants > 0:
+                index = 0
+                attack_index = random.randrange(0, length_ants)
+                if not fight:
+                    for ant_opp in ants_opp:
+                        if index == attack_index:
+                            self._attack(ants_opp[index]['ant'])
+                            fight = True
+                    index += 1
+
+
+        # return home
+        elif self.status == 2:
+            x1 = self.coord.x
+            y1 = self.coord.y
+
+            x2 = colony.coord.x
+            y2 = colony.coord.y
+
+            # move decision
+            min_home_index = 0
+            min_dis = 1000000
+            index = 0
+            # print(len(empty))
+            for emp in empty:
+
+                dis = Helpers.euclidian(emp['coordinate'], Helpers.find_colony(colonies, self.colony_id).coord)
+                if dis < min_dis:
+                    min_dis = dis
+                    min_home_index = index
+                index += 1
+
+            try:
+                should_move_coord = empty[min_home_index]['coordinate']
+                prop = self._prospective_move(should_move_coord)
+                if self.status == 2:
+
+                    self._move(should_move_coord)  # move it!  move it!
+
+                    if self.coord == colony.coord:
+                        # colony.res_portion += self.res.portions
+                        # self.res = None
+                        self.status = 1
+                        self.prev_coord = None
+
             except IndexError as e:
                 # print("not moving")
                 ms = 9
 
+        # search and destroy
+        elif self.status == 3 or self.status == 66:
+            # first go to targetted location on the graph/grid
+            target = self.target_coord
+            # move decision
+            min_home_index = 0
+            min_dis = 1000000
+            index = 0
+            for emp in empty:
+
+                dis = Helpers.euclidian(emp['coordinate'],
+                                        self.target_coord)
+                if dis < min_dis:
+                    min_dis = dis
+                    min_home_index = index
+                index += 1
+
+            try:
+                should_move_coord = empty[min_home_index]['coordinate']
+                prop = self._prospective_move(should_move_coord)
+
+
+                self._move(should_move_coord)  # move it!  move it!
+
+                if (self.coord == self.target_coord and self.status == 66) or (Agent._if_adjacent(self.coord, self.target_coord) and self.status == 3):
+                    self.status = 4
+                    self.prev_coord = None
+
+                fight = False
+                length_ants = len(ants_opp)
+                length_soldiers = len(soldiers_opp)
+
+                if length_soldiers > 0:
+                    attack_index = random.randrange(0, length_ants)
+                    index = 0
+                    for sold_opp in soldiers_opp:
+                        if index == attack_index:
+                            self._attack(soldiers_opp[index]['ant'])
+                            fight = True
+                        index += 1
+
+                if length_ants > 0:
+                    index = 0
+                    attack_index = random.randrange(0, length_ants)
+                    if not fight:
+                        for ant_opp in ants_opp:
+                            if index == attack_index:
+                                self._attack(ants_opp[index]['ant'])
+                                fight = True
+                            index += 1
+
+            except IndexError as e:
+                ms = 9
+
+        # status 4 hold and fight
+        elif self.status == 4:
+            print('status 4')
+            fight = False
+            length_ants = len(ants_opp)
+            length_soldiers = len(soldiers_opp)
+
+            if length_soldiers > 0:
+                attack_index = random.randrange(0, length_ants)
+                index = 0
+                for sold_opp in soldiers_opp:
+                    if index == attack_index:
+                        self._attack(soldiers_opp[index]['ant'])
+                        fight = True
+                    index += 1
+
+            if length_ants > 0:
+                index = 0
+                attack_index = random.randrange(0, length_ants)
+                if not fight:
+                    for ant_opp in ants_opp:
+                        if index == attack_index:
+                            self._attack(ants_opp[index]['ant'])
+                            fight = True
+                    index += 1
+        else:
             return
-
-
-

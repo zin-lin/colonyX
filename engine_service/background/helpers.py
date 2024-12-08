@@ -40,6 +40,10 @@ class Helpers:
         for ant in colony.ants:
             if ant.id == aid:
                 return ant
+
+        for ant in colony.soldiers:
+            if ant.id == aid:
+                return ant
         return None
 
     # find resource in resources
@@ -144,20 +148,34 @@ class Helpers:
         for row in grid:
             for cell in row:
                 data = cell.split(',')
-                if cell == ",,,":
+                if cell == ",,,,,":
                     print("     ", end=' ')
                 elif data[0] != "" and data[1] != "" and data[2] == "" and data[3] == "":
                     print("  ࿚  ", end=' ')
                 elif data[1] != "":
                     if data[2] != "":
-                        print("  🐜  ", end=' ')
+                        if data[4] == "3":
+                            print("  🦗  ", end=' ')
+                        else:
+                            print("  🐜  ", end=' ')
                     else:
                         print("__O__", end=' ')
                 elif data[3] != "":
                     if data[2] != "":
-                        print("  🐜 ", end=' ')
+                        if data[4] == "3":
+                            print("  🦗  ", end=' ')
+                        else:
+                            print("  🐜  ", end=' ')
                     else:
-                        print("  🌲  ", end=' ')
+                        # print resource
+                        if data[5] == "":
+                            print("  🌲  ", end=' ')
+                        elif data[5] == "1":
+                            print("  💦  ", end=' ')
+                        elif data[5] == "2":
+                            print("  🍗  ", end=' ')
+                        else:
+                            print("  ❌  ", end=' ')
 
             print(end='\n')
 

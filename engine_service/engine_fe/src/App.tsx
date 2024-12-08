@@ -6,7 +6,8 @@ import Home from './views/Home';
 import About from './views/About';
 import Login from './views/Login';
 import Cases from "./views/Cases";
-import Track from "./views/Track";
+import Game from "./views/Game";
+import StartGame from "./views/StartGame";
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
                 <Route element={<About/>} path='/about' />
                 <Route element={<Login/>} path='/alogin' />
                 <Route element={<Cases/>} path='/cases' />
-                <Route element={<Track/>} path='/track/:cid' />
+                <Route element={<Game/>} path='/game' />
+                <Route element={<StartGame/>} path='/start' />
             </Routes>
           </div>
           <MobileNav/>

@@ -10,8 +10,11 @@ console.log("Preload script path:", preloadPath);  // This will print the absolu
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1300,
     height: 600,
+    minHeight:800,
+    minWidth: 1300,
+    icon: path.join(__dirname, 'lg.png'),
     frame: false, // Disable the default title bar
     webPreferences: {
       preload: preloadPath, // Use the preload script

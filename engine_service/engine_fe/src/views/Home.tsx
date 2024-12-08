@@ -15,9 +15,8 @@ export default function Home (){
     useEffect(() => {
 
         let data:FormData = new FormData();
-        data.append('app_id', 'ambulance_service-234234234sadnnbqweh2u3');
 
-        axios.post('/api/authed', data).then(
+        axios.post('http://localhost:15000/', data).then(
             res => {
                 console.log(res.data);
                 if (res.data['id'] !== ''){
@@ -38,19 +37,16 @@ export default function Home (){
 
 
                 <div style={{padding: 60}}>
-                    { !authed?
-                        (<button className='redx shRed' style={{width: '360px'}} onClick={() => {
-                            navigate('/alogin');
-                        }}>
-                            <p>{'@hospital> ./login'}</p>
-                        </button>) :
 
-                  (  <button className='redx shRed' style={{width: '360px'}} onClick={() => {
-                        navigate('/cases');
-                    }}>
-                        <p>{'@hospital> ./check [database] '} {id}</p>
-                    </button>)
-                }
+                        <button className='redx shRed' style={{width: '360px'}} onClick={() => {
+                            navigate('/start');
+                        }}>
+                            <p> <span style={{color:'#511c2f'}}>{'@annex_system>'}</span> new_game <span
+                                style={{color:'#e4da6f'}}
+                            >--start</span></p>
+                        </button>
+
+
                 </div>
 
                 <div style={{
@@ -82,14 +78,16 @@ export default function Home (){
                                 <div style={{display: 'flex'}}>
                                     <div className='circle' style={{background: 'white'}}></div>
                                     <div className='circle bluex' style={{width: 60, height: 13}}></div>
-                                    <span className="material-symbols-outlined grayx">
-                                        map
+                                    <span className="material-symbols-outlined grayx" style={{color:'#5ebcff'}}>
+                                        pest_control
                                     </span>
                                 </div>
-                                <p style={{color: 'rgba(244,117,117,0.53)'}}>"Seamless map access in applications helps locate medical
-                                    services quickly, optimizing routes for emergency responders and ensuring timely assistance, ultimately enhancing healthcare accessibility and response efficiency during emergencies.
+                                <p style={{color: 'rgba(244,117,117,0.53)'}}>"
+                                    Leafcutter ants are remarkable insects known for their intricate social structure and cooperative behaviors.
+                                    They cultivate fungus by cutting leaves and using them as a substrate for growing their food source.
+                                    This benefits providing a sustainable food supply.
                                     "</p>
-                                <button className='redx shRed'>Loate Now</button>
+                                <button className='redx shRed'>Try Now</button>
                             </div>
                                 <div style={{
                                     borderRadius: 12,
@@ -103,15 +101,16 @@ export default function Home (){
                                         <div className='circle' style={{background: 'rgba(220,160,98,0.66)'}}></div>
                                         <div className='circle'
                                              style={{background: 'orange', width: 60, height: 12}}></div>
-                                        <span className="material-symbols-outlined grayx">
-                                            call
+                                        <span className="material-symbols-outlined" style={{color:'#ffa65e'}}>
+                                            emoji_nature
                                         </span>
                                     </div>
-                                    <p style={{color: 'rgba(220,160,98,0.66)'}}>" Ambulances provide rapid transportation and immediate
-                                        medical care, bridging the gap between emergency scenes and hospitals, Ambulance Services in the Uk are now ensuring prompt treatment that can significantly improve patient survival and outcomes.
-
+                                    <p style={{color: 'rgba(220,160,98,0.66)'}}>"
+                                        With Annex: ColonyX you can simulate entire colonies of ants, with different roles, including soldiers, scouts
+                                        workers and of course the queen. Each colony needs specific ants to function as a whole adding to
+                                        the complexity of the ColonyX system.
                                     "</p>
-                                <button className='orangex shOrange'>Save Lives</button>
+                                <button className='orangex shOrange'>Try Now</button>
                             </div>
                             <div style={{
                                 borderRadius: 12,
@@ -124,38 +123,21 @@ export default function Home (){
                                 <div style={{display: 'flex'}}>
                                     <div className='circle' style={{background: 'rgba(255,74,252,0.67)'}}></div>
                                     <div className='circle redx' style={{width: 60, height: 13}}></div>
-                                    <span className="material-symbols-outlined grayx">
-                                        ambulance
+                                    <span className="material-symbols-outlined grayx" style={{color:'#ff5e7c'}}>
+                                        road
                                     </span>
                                 </div>
-                                <p style={{color: 'rgba(255,74,252,0.67)'}}>" NHS ambulance services ensure equal access to emergency
-                                    care, supporting public health and well-being in the United Kingdom by providing free, life-saving services, reinforcing the NHS’s commitment to accessible healthcare for all."</p>
-                                <button className='shPurple purplex'>Ambulance Services</button>
+                                <p style={{color: 'rgba(255,74,252,0.67)'}}>"
+                                        With Annex: ColonyX you can simulate entire environments, with different resources, including meat, trees
+                                        leafs and of course water. Each colony needs specific resources to feed the queen adding more ants promoting
+                                        the realism of the ColonyX system.
+                                </p>
+                                <button className='shPurple purplex'>Simulate</button>
                             </div>
-                            <div style={{
-                                borderRadius: 12,
-                                height: '100%',
-                                padding: '20px',
-                                margin: '20px',
-                                boxShadow: "4px 4px 16px 10px rgba(110,110,110,0.09) ",
-                                borderColor:'rgba(93,232,153,0.6)'
-                            }} className='wrap-text-white dcs'>
-                                <div style={{display: 'flex'}}>
-                                    <div className='circle' style={{background: 'rgba(93,232,153,0.6)'}}></div>
-                                    <div className='circle purplex' style={{width: 60, height: 13}}></div>
-                                    <span className="material-symbols-outlined grayx" >
-                                        church
-                                    </span>
-                                </div>
-                                <p style={{color: 'rgba(93,232,153,0.6)'}}>"Effective emergency response and medical aid services across
-                                    Scotland reduce critical delays, providing timely care that saves lives, improves patient outcomes, avoid and prevent disasters,and strengthens overall public health and safety."</p>
-                                <button className='shGreen greenx'>Save Scotland</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>);
 }

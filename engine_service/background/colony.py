@@ -20,6 +20,9 @@ class Colony:
         self.pheromones = []
         self.scouts = []
         self.soldiers = []
+        self.queen = []
+        self.banned_res = None
+        self.target_res = None
 
     # remove dead ants
     def remove_dead_ants(self):
@@ -30,3 +33,4 @@ class Colony:
 
         for ant in remove_list:
             self.ants.remove(ant)
+

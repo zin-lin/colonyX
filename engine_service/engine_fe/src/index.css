@@ -88,7 +88,7 @@ nav {
     top: 0; /* required */
     border: #e82645 1px solid;
     border-width: 0px 0px 0px 0px;
-
+    -webkit-app-region: drag;
     border-radius: 50px;
 }
 
@@ -184,11 +184,18 @@ input:active{outline: none;
 
 input.noner{
     border-bottom: 1px solid rgba(49, 49, 49, 0.079);
+    color:#eee
+}
+
+input.noner:focus, hover{
+    border-bottom: 1px solid rgba(239, 8, 255, 0.9);
+
 }
 
 select{
     background-color: transparent; /* Set the background color to transparent */
     color: inherit; /* Inherit the text color from the input */
+
     background: transparent;
     transition: 0.4s ease;
     border-bottom: 1px solid #eee;
@@ -535,7 +542,7 @@ Blue X
     background-color: #811a70;
 }
 .shPurple {
-    box-shadow: 1px 1px 10px 1px rgba(247, 0, 255, 0.34);
+    box-shadow: 1px 1px 10px 1px rgba(234, 72, 239, 0.63);
 }
 
 /*

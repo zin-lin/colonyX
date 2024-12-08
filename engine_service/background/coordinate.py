@@ -11,6 +11,14 @@ class Coordinate:
         self.x = x
         self.y = y
 
+    # operator overloads equals
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    # not equal
+    def __ne__(self, other):
+        return self.x != other.x or self.y != other.y
+
     # move left
     def move_left(self, x=1):
         self.x -= x
