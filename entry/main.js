@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, dialog , BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const { exec } = require('child_process');
 
 let mainWindow;
 
@@ -8,8 +9,48 @@ const preloadPath = path.join(__dirname, 'pl.js');
 console.log("Preload script path:", preloadPath);  // This will print the absolute path to preload.js
 
 
-app.on('ready', () => {
-  mainWindow = new BrowserWindow({
+app.on('ready', async () => {
+    // docker build
+    try {
+        await dockerUp();
+    } catch (error) {
+        console.error(error);
+        //app.quit()
+    }
+    finally {
+        // build browser window for electron app
+        app_build()
+    }
+
+
+});
+
+const dockerUp = async () =>{
+    return new Promise((resolve, reject) => {
+
+          const composeFilePath = '../docker-compose.yaml'; // Adjust the path to your file
+          const command = `docker-compose -f ${composeFilePath} up -d`;
+          console.log('Starting Docker containers...');
+          exec(command, (error, stdout, stderr) => {
+            if (error) {
+              console.error(`Error starting Docker Compose: ${error.message}`);
+              //app.quit(); // Quit the app if Docker fails to start
+              reject(error);
+            }
+            else if (stderr) {
+              console.warn(`Docker Compose stderr: ${stderr}`);
+              reject(stderr)
+            }
+            else{
+                console.log(`Docker Compose stdout: ${stdout}`);
+                resolve(stdout);
+            }
+          });
+            });
+        }
+
+const app_build = () =>{
+    mainWindow = new BrowserWindow({
     width: 1300,
     height: 600,
     minHeight:800,
@@ -24,13 +65,53 @@ app.on('ready', () => {
   });
 
   mainWindow.loadFile('index.html');
-});
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+
+    // Stop Docker containers when the app closes
+        const composeFilePath = path.resolve(__dirname, '../docker-compose.yaml');
+    exec(`docker-compose -f ${composeFilePath} down --remove-orphans`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error stopping Docker Compose: ${error.message}`);
+      }
+    });
+  });
+
+}
+
+app.on('before-quit', ()=>{
+    // Stop Docker containers when the app closes
+    const composeFilePath = path.resolve(__dirname, '../docker-compose.yaml');
+
+    exec(`docker-compose -f ${composeFilePath} down --remove-orphans`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error stopping Docker Compose: ${error.message}`);
+      }
+    });
+
+})
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+// Stop Docker containers when the app closes
+
+    const composeFilePath = '../docker-compose.yaml'; // Update to your actual file path
+    exec(`docker-compose -f ${composeFilePath} down --remove-orphans`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error stopping Docker Compose: ${error.message}`);
+      }else{
+          console.log(`Docker Compose Down`);
+      }
+    });
+    console.log('all done')
+    quit();
+});
+
+const quit = ()=>{
+    if (process.platform !== 'darwin') {
     app.quit();
   }
-});
+}
 
 
 // Handle minimize
@@ -52,8 +133,48 @@ ipcMain.on('maximise-window', () => {
   }
 });
 
+// Stop Docker
+const stopDockers = async ()=>{
+    const composeFilePath = path.resolve(__dirname, '../docker-compose.yaml');
+    return new Promise((resolve, reject) => {
+        exec(`docker-compose -f ${composeFilePath} down`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error stopping Docker Compose: ${error.message}`);
+                reject(error); // Reject the promise on error
+            } else {
+                console.log('Docker Compose stopped:', stdout);
+                resolve(stdout); // Resolve the promise on success
+            }
+        });
+    });
+}
+
+
 // Handle close
-ipcMain.on('close-window', () => {
-  const window = BrowserWindow.getFocusedWindow();
-  if (window) window.close();
+ipcMain.on('close-window', async () => {
+
+  try {
+         const options = {
+            type: 'info',
+            buttons: ['OK'],
+            title: 'Closing ColonyX',
+            message: 'Docker containers have been stopped successfully. Closing ColonyX...',
+        };
+
+        // Stop Docker containers when the app closes
+        await stopDockers();
+        await dialog.showMessageBox(BrowserWindow.getFocusedWindow(), options);
+
+        console.log('Docker containers stopped successfully.');
+    } catch (err) {
+        console.error('Failed to stop Docker containers:', err);
+    } finally {
+        // Kill browser window
+        close();
+    }
 });
+
+const close = ()=>{
+    const window = BrowserWindow.getFocusedWindow();
+    if (window) window.close();
+}

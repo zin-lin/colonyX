@@ -4,8 +4,6 @@ import Nav from './components/Navigators/Nav';
 import MobileNav from './components/Navigators/MobileNav';
 import Home from './views/Home';
 import About from './views/About';
-import Login from './views/Login';
-import Cases from "./views/Cases";
 import Game from "./views/Game";
 import StartGame from "./views/StartGame";
 
@@ -20,8 +18,6 @@ function App() {
             <Routes>
                 <Route element={<Home/>} path='/' />
                 <Route element={<About/>} path='/about' />
-                <Route element={<Login/>} path='/alogin' />
-                <Route element={<Cases/>} path='/cases' />
                 <Route element={<Game/>} path='/game' />
                 <Route element={<StartGame/>} path='/start' />
             </Routes>

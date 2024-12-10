@@ -6,4 +6,4 @@ services:
       context: ./
     container_name: colonyx
     ports:
-      - "80:15000"
+      - "15566:15000"

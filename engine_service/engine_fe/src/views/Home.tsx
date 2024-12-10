@@ -1,7 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import promo from '../assets/ad.png';
-import Login from "./Login";
 import axios from "axios";
 export default function Home (){
 

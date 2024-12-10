@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
-import axios, {all} from "axios";
 import Row from "../components/Row";
 import {useNavigate} from "react-router-dom";
+import DataStrip from "../components/DataStrip";
 
 interface DATA {
     cid : string ;
@@ -10,18 +10,21 @@ interface DATA {
 
 export default function Game() {
 
-    const [grid, setGrid] = useState([[]]);
+  const [grid, setGrid] = useState([[]]);
   const [auto, setAuto] = useState(true);
   let intervalId: NodeJS.Timeout | null = null;
   const navigate = useNavigate();
+  const [stats, setStats] = useState([[]]);
 
   const perform_turn = () => {
     intervalId = setInterval(async () => {
       try {
-        const response = await fetch(`http://localhost:15000/api/game/`);
+        const response = await fetch(`api/game/`);
         const data = await response.json();
-        if (data['env'].length !== 0) {
+        if (data['env']!.length !== 0) {
           setGrid(data['env']);
+          setStats(data['meta']);
+
         } else {
           stopTurn();
         }
@@ -34,20 +37,14 @@ export default function Game() {
   const stopTurn = () => {
     if (intervalId) {
       clearInterval(intervalId);
+      console.log("stopped")
       intervalId = null;
     }
   };
 
   useEffect(() => {
-    fetch(`http://localhost:15000/api/game`)
-      .then((res) => res.json())
-      .then((data) => {
-        setGrid(data['env']);
-        if (auto) {
-          perform_turn();
-        }
-      })
-      .catch((e) => console.log(e));
+
+      perform_turn();
 
     return () => stopTurn(); // Cleanup interval on unmount
   }, []);
@@ -97,8 +94,9 @@ export default function Game() {
                 <div style={{display:'flex', justifyContent:'center'}}>
                     <button><span className='material-symbols-outlined' style={{color: '#ff5959'}} onClick={()=>{
                         setAuto(false);
-
-                        window.location.reload();
+                          setGrid([[]]);
+                          setStats([[]]);
+                          stopTurn();
                         navigate(-1);
                     }}>stop</span></button>
                     <button><span className='material-symbols-outlined' style={{color: '#5ebcff'}}>arrow_back</span></button>
@@ -108,6 +106,16 @@ export default function Game() {
                     }}>play_arrow</span></button>
 
                 </div>
+   {
+                    stats.map((row, index) =>{
+                        return (
+                            <DataStrip row={row} key={index}/>
+                        );
+                    })
+                }
+
+            </div>
+            <div>
 
             </div>
 

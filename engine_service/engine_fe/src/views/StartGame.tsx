@@ -20,7 +20,7 @@ export default function StartGame () {
         form.append('col_len', col_len);
 
         console.log(case_new);
-        axios.post('http://localhost:15000/api/create_game', form, {withCredentials:true}).then(response => {
+        axios.post('/api/create_game', form, {withCredentials:true}).then(response => {
             let id = response.data.id;
             navigate(`/game`);
         }).catch(error => {})

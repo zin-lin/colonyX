@@ -252,7 +252,7 @@ class Agent:
         know_data = self._knowledge.knowledge_data
         for data in know_data:
             # print(data)
-            if (data['colony_id'] == self.colony_id) and (data['pheromone_id'] != "") and (data['ant'] is None) and (data['res'] is None):
+            if (data['colony_id'] == self.colony_id) and (data['pheromone_id'] != "") and (data['res'] is None):
                 # print('called inside')
                 if self.pheromone_id == "":
                     # print('called no pher add')
@@ -363,12 +363,7 @@ class Agent:
                         prop = self._prospective_move(should_move_coord)
 
 
-                        if self.status == 1:
-                            for colony in colonies:
-                                for ant in colony.ants:
-                                    if prop.x == ant.coord.x and prop.y == ant.coord.y:
-                                        # print('not moving')
-                                        return
+
 
                         self._move(should_move_coord)  # move it!  move it!
                         self.prev_coord = current
@@ -407,12 +402,7 @@ class Agent:
                 should_move_coord = empty[min_home_index]['coordinate']
                 prop = self._prospective_move(should_move_coord)
                 if self.status == 2:
-                    # for col in colonies:
-                    #     for ant in colony.ants:
-                    #         if should_move_coord.x == ant.coord.x and should_move_coord.y == ant.coord.y:
-                    #             # print('not moving')
-                    #             if not (should_move_coord.x == colony.coord.x and should_move_coord.y == colony.coord.y):
-                    #                 return
+
                     self._move(should_move_coord)  # move it!  move it!
 
                     if self.coord.x == colony.coord.x and self.coord.y == colony.coord.y:
@@ -633,14 +623,14 @@ class Agent:
         soldier_length = len(colony.soldiers)
 
         if worker_length < 10:  # max 10
-            if colony.res_portion > 150:
+            if colony.res_portion > 50:
                 self.mate = 1
-                colony.res_portion -= 100
+                colony.res_portion -= 30
 
         if soldier_length < 3:  # max 3 soldier ants
-            if colony.res_portion > 75:
+            if colony.res_portion > 255:
                 self.mate_soldier = 1
-                colony.res_portion -= 50
+                colony.res_portion -= 200
 
         # we need more devs in the world
         # deal with soldiers

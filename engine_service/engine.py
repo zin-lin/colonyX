@@ -99,6 +99,54 @@ def create_app_def():
         print(col.name + ", " + str(col.coord.x) + ", " + str(col.coord.y))
 
 
+def create_app_def_1():
+    global environment, colonies, resources
+
+    environment = Environment(30, 30, 2)
+    # colonies
+
+    # colonies
+    colonies = [
+        Colony("LC1", "leaf-cutter-1", 16, [], Coordinate(6, 27)),
+        Colony("LC2", "leaf-cutter-2", 16, [], Coordinate(16, 23)),
+        Colony("LC3", "leaf-cutter-3", 16, [], Coordinate(22, 25)),
+    ]
+
+    resources = [
+        Tree(Helpers.get_id(), Coordinate(21, 18), 23),
+        Tree(Helpers.get_id(), Coordinate(11, 23), 23),
+    ]
+
+    lc1 = colonies[0]
+    lc2 = colonies[1]
+    lc3 = colonies[2]
+
+    # env
+    env = Environment(30, 30)
+    env.add_colonies(colonies)
+
+    # add ant
+    add_ant(lc1, 10, )
+    add_ant(lc2, 5, )
+    add_ant(lc3, 5, )
+
+    # add queens
+    add_ant(lc1, 1, 2)
+    add_ant(lc2, 1, 2)
+    add_ant(lc3, 1, 2)
+
+    # add scouts
+    add_ant(lc1, 1, 3)
+    add_ant(lc2, 1, 3)
+    add_ant(lc3, 1, 3)
+
+    # Uncomment this to test print grid
+    # Helpers.print_grid(env.grid)
+
+    # Uncomment this to test visualisation
+    env.manage_state(colonies, resources)
+
+
 # turn
 async def turn():
     global environment, colonies, resources
@@ -130,8 +178,14 @@ async def turn():
 
 
 # Flask
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./engine_fe/build', static_url_path='/')
 CORS(app, origins='*', supports_credentials=True)
+
+
+@app.route('/check', methods=['GET', 'POST'])
+@cross_origin()
+def check():
+    return jsonify({'msg': 'ping'})
 
 
 # home route
@@ -141,7 +195,8 @@ def home():
     environment = None
     colonies = []
     resources = []
-    return ''
+
+    return app.send_static_file('index.html')
 
 
 @app.route('/clear', methods=['GET', 'POST'])
@@ -172,14 +227,14 @@ def create_game():
     # colonies
 
     for i in range(col_len):
-        ran_x = randrange(0, size)
-        ran_y = randrange(0, size)
+        ran_x = randrange(1, size-1)
+        ran_y = randrange(1, size-1)
         for col in colonies:
             if col.coord == Coordinate(ran_x, ran_y):
-                ran_x = randrange(0, size)
-                ran_y = randrange(0, size)
+                ran_x = randrange(1, size-1)
+                ran_y = randrange(1, size-1)
         # add colonies
-        colonies.append(Colony('LC' + str(i + 1), 'LC' + str(i + 1), 10, [], Coordinate(ran_x, ran_y)))
+        colonies.append(Colony('LC' + str(i + 1), 'LC' + str(i + 1), 30, [], Coordinate(ran_x, ran_y)))
 
     for col in colonies:
         # add queen
@@ -205,16 +260,21 @@ def game():
     global environment, colonies
 
     if environment is None:
-        environment = Environment(25, 25, 2)
+        environment = Environment(25, 25, 2, True)
 
     asyncio.run(turn())
 
     if len(colonies) == 0:
-        return jsonify({'env': []})
+        return jsonify({'env': [], 'meta': []})
 
     print(len(environment.grid))
 
-    return jsonify({'env': environment.grid})
+    # meta array
+    meta = []
+    for col in colonies:
+        meta.append([col.id, len(col.queen), len(col.scouts), len(col.ants), len(col.soldiers), col.res_portion])
+
+    return jsonify({'env': environment.grid, 'meta': meta})
 
 
 if __name__ == '__main__':

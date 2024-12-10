@@ -2,7 +2,7 @@ import React from "react";
 
 type RowProps = {
   row: string[]; // Define the type of the row prop
-    key: number;
+  key: number;
 };
 
 type para = {
@@ -174,7 +174,7 @@ export default function Row({ row, key }: RowProps) {
                         flex: 1,
                     }}
                 >
-                    <span className="material-symbols-outlined" style={{color: '#5ebcff',}}>fort</span>
+                    <span className="material-symbols-outlined" style={{color: '#eee',}}>fort</span>
                 </div>
 
             );

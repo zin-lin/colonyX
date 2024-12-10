@@ -24,13 +24,15 @@ class LeafCutterAnt(ant_agent.Agent):
         # species specifics
         self.species = "LC"
 
-        self._scan_reach = 2
+        self._scan_reach = 1
         self.msg = "allocate"
         if self.scout:
+            self._scan_reach = 1
             self.rank = 2
 
         elif self.queen:
             self.rank = 100
 
         elif self.soldier:
+            self._scan_reach = 2
             self.rank = 3

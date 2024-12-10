@@ -83,12 +83,16 @@ class Environment:
         self.size = (size_x, size_y)
 
     # Constructor
-    def __init__(self, size_x=20, size_y=20, res_size=1):
+    def __init__(self, size_x=20, size_y=20, res_size=1, rand=False):
         # add 0s to every grid point
+        self.grid = []
         self._init_state(size_x, size_y)
         self.obstacles = []
         self.res_size = res_size
         self.res = res_size
+        self.start = True
+        self.rand = rand
+        self.mem = 5
 
     # Add resources to the environment
     def add_resource(self, resources: list[Resource or Leaf or Tree]):
@@ -152,7 +156,7 @@ class Environment:
                     try:
                         colony.ants.remove(ant)
                     except:
-                        print ('m9')
+                        print('m9')
 
             for ant in colony.scouts:
                 # print(colony.coord.x)
@@ -173,6 +177,8 @@ class Environment:
         # add random obstacles
         self.add_obstacles()
 
+        self.start = False
+
         for ob in self.obstacles:
             self._deal_resource(ob)  # obstacle are of resource type
 
@@ -181,6 +187,9 @@ class Environment:
         # call block of code again to deal with added resources
         for resource in resources:
             self._deal_resource(resource)
+
+        if self.mem == 0:
+            self.mem = 5
 
     # Test Pheromone method
     def test_add_pheromone(self, colony, colony2, colony3):
@@ -259,8 +268,8 @@ class Environment:
     def _get_empties(self):
         emp = []
         # get emptys
-        for i in range(len(self.grid)):
-            for j in range(len(self.grid[i])):
+        for i in range(1, len(self.grid)-1):
+            for j in range(1, len(self.grid[i])-1):
                 if self.grid[i][j] == ",,,,,":
                     emp.append({'y': i, 'x': j})
         return emp
@@ -297,6 +306,13 @@ class Environment:
             rand_index = randrange(0, len(emp))
             ran_type = randrange(0, 3)
             ran_amount = randrange(30, 500)
+
+            if rand_index == 0:
+                rand_index += 1
+
+            elif rand_index == len(self.grid)-1:
+                rand_index -= 1
+
             ran = None
             if ran_type == 0:
                 ran = Tree(Helpers.get_id(), Coordinate(emp[rand_index]['x'], emp[rand_index]['y']), ran_amount)
