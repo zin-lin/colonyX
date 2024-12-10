@@ -1,0 +1,48 @@
+/* Reset default margin and padding */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Title Bar */
+#titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  margin: 0;
+  background: #120b20;
+  color: white;
+  -webkit-app-region: drag; /* Allows dragging the window */
+}
+
+#title {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+#controls {
+  display: flex;
+  align-items: center;
+}
+
+#controls button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  width: 40px;
+  height: 100%;
+  cursor: pointer;
+  -webkit-app-region: no-drag; /* Prevent buttons from being draggable */
+}
+
+#controls button:hover {
+  background: #555;
+}
+
+/* App Content */
+#content {
+  padding: 20px;
+}
