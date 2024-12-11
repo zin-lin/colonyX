@@ -221,8 +221,8 @@ def create_game():
 
     size = int(eval(request.form.get('size')))
     col_len = int(eval(request.form.get('col_len')))
-    print(size)
-    environment = Environment(size, size, col_len - 1)
+    res_num = col_len - 1 if col_len > 1 else 1
+    environment = Environment(size, size, res_num, True)
 
     # colonies
 

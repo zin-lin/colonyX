@@ -51,6 +51,7 @@ const dockerUp = async () =>{
 
 const app_build = () =>{
     mainWindow = new BrowserWindow({
+    title: 'ColonyX',
     width: 1300,
     height: 600,
     minHeight:800,
