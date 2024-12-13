@@ -38,7 +38,7 @@ def add_ant(colony, number=1, ant_type=1):
 
 # process ant
 async def process_ant(ant, cls, ress, envv):
-    """Process an individual ant."""
+    # Process an individual ant agent.
     if not ant.scout:
         if ant.soldier:
             ant.soldier_perform(cls, ress, envv.grid)
@@ -56,7 +56,7 @@ async def process_ant(ant, cls, ress, envv):
 
 # process colony
 async def process_colony(colony, cls, ress, envv):
-    """Process all ants in a colony."""
+    # Process all ants in a colony.
     tasks = [
         *[process_ant(scout, cls, ress, envv) for scout in colony.scouts],
         *[process_ant(ant, cls, ress, envv) for ant in colony.ants],
@@ -182,6 +182,8 @@ app = Flask(__name__, static_folder='./engine_fe/build', static_url_path='/')
 CORS(app, origins='*', supports_credentials=True)
 
 
+# Check method route
+
 @app.route('/check', methods=['GET', 'POST'])
 @cross_origin()
 def check():
@@ -199,6 +201,7 @@ def home():
     return app.send_static_file('index.html')
 
 
+# clear API
 @app.route('/clear', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def clear():
@@ -209,7 +212,7 @@ def clear():
     resources = []
 
 
-# create game
+# create game API
 @app.route('/api/create_game', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def create_game():
@@ -253,7 +256,7 @@ def create_game():
     return 'OK'
 
 
-# game api
+# game API
 @app.route('/api/game/', methods=['GET', 'POST', 'OPTIONS'])
 @cross_origin(supports_credentials=True)
 def game():

@@ -2,6 +2,9 @@ import React, {FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
+
+// default function StartGame
+// author: Zin Lin Htun
 export default function StartGame () {
 
     const navigate = useNavigate();

@@ -3,11 +3,15 @@ import Row from "../components/Row";
 import {useNavigate} from "react-router-dom";
 import DataStrip from "../components/DataStrip";
 
+
+// DATA props
 interface DATA {
     cid : string ;
 
 }
 
+// default function Game
+// author: Zin Lin Htun
 export default function Game() {
 
   const [grid, setGrid] = useState([[]]);

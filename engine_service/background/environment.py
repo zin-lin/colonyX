@@ -1,7 +1,7 @@
 # Author : Zin Lin Htun
 # Environment class
-import random
 
+import random
 from engine_service.agents.ant_agent import Agent
 from engine_service.background.colony import Colony
 from engine_service.background.coordinate import Coordinate
@@ -16,6 +16,7 @@ from engine_service.resources.obstacle import Obstacle
 from random import *
 
 
+# main  class
 class Environment:
     grid = []
     size = (20, 20)
