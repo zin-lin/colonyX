@@ -1,0 +1,10 @@
+flask
+flask-cors
+bcrypt
+blinker
+Flask-SQLAlchemy
+Flask-JWT-Extended
+firebase-admin
+flask_socketio
+flask-bcrypt
+asyncio

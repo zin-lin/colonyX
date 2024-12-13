@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ColonyX</title>
+  <link rel="stylesheet" href="titlebar.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body id="body">
+  <!-- Custom Title Bar -->
+  <div id="titlebar">
+
+    <div id="controls">
+      <button id="minimize"  style="width: 14px; height: 14px; border-radius: 7px;
+      background: #fff262; margin-left: 10px; margin-right: 6px;
+      "></button>
+      <button id="maximize" style="width: 14px; height: 14px; border-radius: 7px;
+      background: #62ff94;  margin-left: 6px; margin-right: 6px;
+      "></button>
+      <button id="close" style="width: 14px; height: 14px; border-radius: 7px;
+      background: #ff5959;  margin-left: 6px;
+      "></button>
+    </div>
+  </div>
+
+  <!-- App Body -->
+      <iframe id="webview"
+               src="http://127.0.0.1:15566/" style=" margin:0; outline: none; border: none"
+      ></iframe>
+
+
+  <script src="renderer.js"></script>
+</body>
+</html>
