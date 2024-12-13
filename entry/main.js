@@ -4,11 +4,11 @@ const { exec } = require('child_process');
 
 let mainWindow;
 
-  // Make sure the path is correct
+  // Make sure the path is correct for preloader
 const preloadPath = path.join(__dirname, 'pl.js');
-console.log("Preload script path:", preloadPath);  // This will print the absolute path to preload.js
+console.log("Preload script path:", preloadPath);
 
-
+// on ready execute this.
 app.on('ready', async () => {
     // docker build
     try {
@@ -25,12 +25,15 @@ app.on('ready', async () => {
 
 });
 
+
+// docker up and run all images using docker-compose
 const dockerUp = async () =>{
     return new Promise((resolve, reject) => {
 
           const composeFilePath = '../docker-compose.yaml'; // Adjust the path to your file
           const command = `docker-compose -f ${composeFilePath} up -d`;
           console.log('Starting Docker containers...');
+          // use exec in cmd
           exec(command, (error, stdout, stderr) => {
             if (error) {
               console.error(`Error starting Docker Compose: ${error.message}`);
@@ -49,6 +52,7 @@ const dockerUp = async () =>{
             });
         }
 
+// build browser window
 const app_build = () =>{
     mainWindow = new BrowserWindow({
     title: 'ColonyX',
