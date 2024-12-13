@@ -3,13 +3,6 @@ import {Link} from "react-router-dom";
 import {useAuthDispatch} from "../../redux/hook";
 import {toHome, toShop, resetAllVs, toAbout} from "../../redux/authState";
 
-const navSty = {
-    fontSize:16, margin:10
-}
-
-const napierColor = {
-    color:"#FF5757"
-}
 
 export default function Nav () {
     const dispatch = useAuthDispatch();
@@ -21,10 +14,10 @@ export default function Nav () {
             <div className='hider' style={{right:10, position:'absolute', display:'flex', height:'100%', alignItems:'center'}}>
                 <Link onClick={()=> dispatch(toHome())} to='/'><p style={{fontSize:16, margin:12 }}>Ho<span style={{color:"#fb6b6b"}}>me</span></p></Link>
                 <Link onClick={()=> dispatch(toAbout())} to='/about'><p style={{fontSize:16, margin:12 }}>Abo<span style={{color:"#fb6b6b"}}>ut</span></p></Link>
-                <Link onClick={()=> dispatch(resetAllVs())} to='/cases'><p style={{fontSize:16, margin:12 }}><span className="material-symbols-outlined">
+                <Link onClick={()=> dispatch(resetAllVs())} to='/start'><p style={{fontSize:16, margin:12 }}><span className="material-symbols-outlined">
                 search
                 </span></p></Link>
-                <Link onClick={()=> dispatch(toShop())} to='/alogin'><p style={{fontSize:16, margin:12 }}><span className="material-symbols-outlined red">
+                <Link onClick={()=> dispatch(toShop())} to='/game'><p style={{fontSize:16, margin:12 }}><span className="material-symbols-outlined red">
                 pest_control
                 </span></p></Link>
             </div>

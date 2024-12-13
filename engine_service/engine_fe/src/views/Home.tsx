@@ -1,6 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
+
+// default function Home
+// author: Zin Lin Htun
 export default function Home (){
 
     const reader = new FileReader();
